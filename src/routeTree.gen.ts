@@ -17,6 +17,7 @@ import { Route as InstitutionsRouteImport } from './routes/institutions'
 import { Route as EnquireRouteImport } from './routes/enquire'
 import { Route as DifferenceRouteImport } from './routes/difference'
 import { Route as CustomYatraRouteImport } from './routes/custom-yatra'
+import { Route as BlogsRouteImport } from './routes/blogs'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -29,6 +30,7 @@ import { Route as TeerthasExploreRouteImport } from './routes/teerthas.explore'
 import { Route as InstitutionsSchoolRouteImport } from './routes/institutions.school'
 import { Route as InstitutionsCorporateRouteImport } from './routes/institutions.corporate'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminForgotPasswordRouteImport } from './routes/admin.forgot-password'
 
 const YatrasRoute = YatrasRouteImport.update({
   id: '/yatras',
@@ -68,6 +70,11 @@ const DifferenceRoute = DifferenceRouteImport.update({
 const CustomYatraRoute = CustomYatraRouteImport.update({
   id: '/custom-yatra',
   path: '/custom-yatra',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BlogsRoute = BlogsRouteImport.update({
+  id: '/blogs',
+  path: '/blogs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -130,11 +137,17 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminForgotPasswordRoute = AdminForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/blogs': typeof BlogsRoute
   '/custom-yatra': typeof CustomYatraRoute
   '/difference': typeof DifferenceRoute
   '/enquire': typeof EnquireRoute
@@ -143,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/methodology': typeof MethodologyRoute
   '/teerthas': typeof TeerthasRouteWithChildren
   '/yatras': typeof YatrasRouteWithChildren
+  '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/institutions/corporate': typeof InstitutionsCorporateRoute
   '/institutions/school': typeof InstitutionsSchoolRoute
@@ -156,11 +170,13 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/blogs': typeof BlogsRoute
   '/custom-yatra': typeof CustomYatraRoute
   '/difference': typeof DifferenceRoute
   '/enquire': typeof EnquireRoute
   '/knowledge-portal': typeof KnowledgePortalRoute
   '/methodology': typeof MethodologyRoute
+  '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/institutions/corporate': typeof InstitutionsCorporateRoute
   '/institutions/school': typeof InstitutionsSchoolRoute
@@ -176,6 +192,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRouteWithChildren
+  '/blogs': typeof BlogsRoute
   '/custom-yatra': typeof CustomYatraRoute
   '/difference': typeof DifferenceRoute
   '/enquire': typeof EnquireRoute
@@ -184,6 +201,7 @@ export interface FileRoutesById {
   '/methodology': typeof MethodologyRoute
   '/teerthas': typeof TeerthasRouteWithChildren
   '/yatras': typeof YatrasRouteWithChildren
+  '/admin/forgot-password': typeof AdminForgotPasswordRoute
   '/admin/login': typeof AdminLoginRoute
   '/institutions/corporate': typeof InstitutionsCorporateRoute
   '/institutions/school': typeof InstitutionsSchoolRoute
@@ -200,6 +218,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/blogs'
     | '/custom-yatra'
     | '/difference'
     | '/enquire'
@@ -208,6 +227,7 @@ export interface FileRouteTypes {
     | '/methodology'
     | '/teerthas'
     | '/yatras'
+    | '/admin/forgot-password'
     | '/admin/login'
     | '/institutions/corporate'
     | '/institutions/school'
@@ -221,11 +241,13 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/blogs'
     | '/custom-yatra'
     | '/difference'
     | '/enquire'
     | '/knowledge-portal'
     | '/methodology'
+    | '/admin/forgot-password'
     | '/admin/login'
     | '/institutions/corporate'
     | '/institutions/school'
@@ -240,6 +262,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/blogs'
     | '/custom-yatra'
     | '/difference'
     | '/enquire'
@@ -248,6 +271,7 @@ export interface FileRouteTypes {
     | '/methodology'
     | '/teerthas'
     | '/yatras'
+    | '/admin/forgot-password'
     | '/admin/login'
     | '/institutions/corporate'
     | '/institutions/school'
@@ -263,6 +287,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRouteWithChildren
+  BlogsRoute: typeof BlogsRoute
   CustomYatraRoute: typeof CustomYatraRoute
   DifferenceRoute: typeof DifferenceRoute
   EnquireRoute: typeof EnquireRoute
@@ -329,6 +354,13 @@ declare module '@tanstack/react-router' {
       path: '/custom-yatra'
       fullPath: '/custom-yatra'
       preLoaderRoute: typeof CustomYatraRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/blogs': {
+      id: '/blogs'
+      path: '/blogs'
+      fullPath: '/blogs'
+      preLoaderRoute: typeof BlogsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -415,15 +447,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/forgot-password': {
+      id: '/admin/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/admin/forgot-password'
+      preLoaderRoute: typeof AdminForgotPasswordRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminForgotPasswordRoute: typeof AdminForgotPasswordRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminForgotPasswordRoute: AdminForgotPasswordRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminIndexRoute: AdminIndexRoute,
 }
@@ -477,6 +518,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRouteWithChildren,
+  BlogsRoute: BlogsRoute,
   CustomYatraRoute: CustomYatraRoute,
   DifferenceRoute: DifferenceRoute,
   EnquireRoute: EnquireRoute,

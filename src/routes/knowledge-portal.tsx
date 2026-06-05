@@ -36,28 +36,6 @@ interface VideoCategory {
   videos: VideoItem[];
 }
 
-const JW = [
-  {
-    id: "kashi",
-    title: "Kashi Knowledge Portal",
-    desc: "Deep insights into the spiritual significance and mysticism of Kashi",
-    videos: [
-      { id: "kashi-1", url: "https://www.youtube.com/embed/LOqXUmuFGI4" },
-      { id: "kashi-2", url: "https://www.youtube.com/embed/9ZgL-awjksM" },
-      { id: "kashi-3", url: "https://www.youtube.com/embed/XBtWwbbTKtQ" },
-      { id: "kashi-4", url: "https://www.youtube.com/embed/DPSJ8UE4fdE" },
-      { id: "kashi-5", url: "https://www.youtube.com/embed/8KLVqSlHOog" },
-    ],
-  },
-
-  {
-    id: "testimonials",
-    title: "Testimonials",
-    desc: "Video essays from seekers coming soon.",
-    videos: [{ id: "testimonial-1", url: "https://www.youtube.com/embed/ZRXdapTdvCI" }],
-  },
-];
-
 const sidebarGuidelines = [
   {
     title: "Pre yatra orientation",
@@ -82,7 +60,6 @@ function KnowledgePortalPage() {
       try {
         const res = await fetch(API_ENDPOINTS.TESTIMONIALS);
         const result = await res.json();
-        console.log(result);
         if (result.success && result.data && result.data.length > 0) {
           setVideos(result.data);
         }
@@ -115,29 +92,37 @@ function KnowledgePortalPage() {
       },
     ];
 
-    videos.forEach((video) => {
-      let categoryId = "kashi";
+    const uniqueVideos = Array.from(
+      new Map(
+        videos
+          .filter((video) => video.videoId && video.isPublished)
+          .map((video) => [video.videoId, video]),
+      ).values(),
+    );
 
-      if (video.category?.includes("Quick Bits")) {
+    uniqueVideos.forEach((video) => {
+      const categoryName = (video.category || "").toLowerCase();
+
+      let categoryId: VideoCategory["id"] = "kashi";
+
+      if (categoryName.includes("quick")) {
         categoryId = "quick-bits";
-      }
-
-      if (video.category?.toLowerCase().includes("testimonial")) {
+      } else if (categoryName.includes("testimonial")) {
         categoryId = "testimonials";
       }
 
-      const category = categories.find((c) => c.id === categoryId);
+      const category = categories.find((cat) => cat.id === categoryId);
 
-      if (category) {
-        category.videos.push({
-          id: String(video.id),
-          title: String(video.title ?? ""),
-          description: String(video.description ?? ""),
-          thumbnailImage: String(video.thumbnailImage ?? ""),
-          featured: Boolean(video.featured),
-          url: `https://www.youtube.com/embed/${video.videoId}`,
-        });
-      }
+      if (!category) return;
+
+      category.videos.push({
+        id: String(video.id),
+        title: String(video.title || ""),
+        description: String(video.description || ""),
+        thumbnailImage: String(video.thumbnailImage || ""),
+        featured: Boolean(video.featured),
+        url: `https://www.youtube.com/embed/${video.videoId}`,
+      });
     });
 
     return categories;
@@ -147,9 +132,7 @@ function KnowledgePortalPage() {
     return dynamicJW.find((cat) => cat.id === activeTab) || dynamicJW[0];
   }, [activeTab, dynamicJW]);
 
-  const [featuredVideo, ...otherVideos] = currentCategory.videos || [];
-
-  const isKashi = activeTab === "kashi";
+  const [featuredVideo, ...otherVideos] = currentCategory?.videos || [];
 
   return (
     <div className="relative min-h-screen overflow-x-hidden transition-colors duration-500 bg-background text-foreground flex flex-col justify-between">
@@ -167,7 +150,7 @@ function KnowledgePortalPage() {
             alt="Sacred Wisdom"
             className="w-full h-full object-cover object-center filter brightness-50"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#1c081e]/40 via-[#1c081e]/60 to-[#1c081e] transition-colors duration-500"></div>
+          <div className="absolute inset-0 bg-linear-to-b from-[#1c081e]/40 via-[#1c081e]/60 to-[#1c081e] transition-colors duration-500"></div>
         </div>
 
         <FlowerField count={18} />
@@ -200,12 +183,13 @@ function KnowledgePortalPage() {
       {/* STICKY TAB SELECTOR */}
       <section
         data-nav-theme="light"
-        className="sticky top-[76px] md:top-[80px] z-40 border-y transition-all duration-500 backdrop-blur-md border-border bg-background/85 text-foreground"
+        className="sticky top-19 md:top-20 z-40 border-y transition-all duration-500 backdrop-blur-md border-border bg-background/85 text-foreground"
       >
         <div className="max-w-7xl mx-auto px-4 md:px-8">
           <div className="flex md:justify-center overflow-x-auto no-scrollbar py-2 md:py-0">
             <div className="flex gap-2 md:gap-8 w-full md:w-auto">
-              {JW.map((cat) => (
+              {/* CHANGE 1: use dynamicJW instead of static JW */}
+              {dynamicJW.map((cat) => (
                 <button
                   key={cat.id}
                   onClick={() => setActiveTab(cat.id)}
@@ -216,6 +200,9 @@ function KnowledgePortalPage() {
                   }`}
                 >
                   {cat.title}
+                  {cat.videos.length > 0 && (
+                    <span className="ml-2 text-xs">({cat.videos.length})</span>
+                  )}
                 </button>
               ))}
             </div>

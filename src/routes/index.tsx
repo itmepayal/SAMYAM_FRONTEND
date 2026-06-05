@@ -991,82 +991,84 @@ function Index() {
 
             <div className="space-y-8">
               {blogs.slice(0, 1).map((blog) => (
-                <ScrollReveal key={blog.id} variant="fade-up">
-                  <div className="relative group p-8 md:p-10 rounded-[2.5rem] bg-white/[0.01] border border-white/5 hover:border-white/10 hover:bg-white/[0.02] transition-all duration-300 space-y-6 overflow-hidden">
-                    <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-cta opacity-5 rounded-full blur-2xl" />
+                <Link to="/blogs">
+                  <ScrollReveal key={blog.id} variant="fade-up">
+                    <div className="relative group p-8 md:p-10 rounded-[2.5rem] bg-white/[0.01] border border-white/5 hover:border-white/10 hover:bg-white/[0.02] transition-all duration-300 space-y-6 overflow-hidden">
+                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-cta opacity-5 rounded-full blur-2xl" />
 
-                    <div className="flex flex-col md:flex-row md:items-center gap-6">
-                      {/* Thumbnail image — falls back to founderImg */}
-                      <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#FF7722]/30 shrink-0 shadow-md">
-                        <img
-                          src={blog.thumbnailImage || founderImg}
-                          alt={blog.author || "Nileema Shenoy"}
-                          className="w-full h-full object-cover"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = founderImg;
-                          }}
-                        />
-                      </div>
+                      <div className="flex flex-col md:flex-row md:items-center gap-6">
+                        {/* Thumbnail image — falls back to founderImg */}
+                        <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-[#FF7722]/30 shrink-0 shadow-md">
+                          <img
+                            src={blog.thumbnailImage || founderImg}
+                            alt={blog.author || "Nileema Shenoy"}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = founderImg;
+                            }}
+                          />
+                        </div>
 
-                      <div className="text-left">
-                        <h4 className="text-lg md:text-xl font-display font-semibold text-white">
-                          {blog.title}
-                        </h4>
-                        <div className="flex items-center gap-2 mt-1 flex-wrap">
-                          <span className="text-[10px] uppercase tracking-wider text-[#FF7722] font-bold">
-                            {blog.author || "Nileema Shenoy"}
-                          </span>
-                          {blog.category && (
-                            <>
-                              <span className="text-[10px] text-white/30">•</span>
-                              <span className="text-[9px] uppercase tracking-wider text-white/40">
-                                {blog.category}
-                              </span>
-                            </>
-                          )}
-                          {blog.readTime && (
-                            <>
-                              <span className="text-[10px] text-white/30">•</span>
-                              <span className="text-[9px] uppercase tracking-wider text-white/40">
-                                {blog.readTime}
-                              </span>
-                            </>
+                        <div className="text-left">
+                          <h4 className="text-lg md:text-xl font-display font-semibold text-white">
+                            {blog.title}
+                          </h4>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <span className="text-[10px] uppercase tracking-wider text-[#FF7722] font-bold">
+                              {blog.author || "Nileema Shenoy"}
+                            </span>
+                            {blog.category && (
+                              <>
+                                <span className="text-[10px] text-white/30">•</span>
+                                <span className="text-[9px] uppercase tracking-wider text-white/40">
+                                  {blog.category}
+                                </span>
+                              </>
+                            )}
+                            {blog.readTime && (
+                              <>
+                                <span className="text-[10px] text-white/30">•</span>
+                                <span className="text-[9px] uppercase tracking-wider text-white/40">
+                                  {blog.readTime}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                          {/* Tags */}
+                          {blog.tags?.length > 0 && (
+                            <div className="flex flex-wrap gap-1.5 mt-2">
+                              {blog.tags.map((tag: string) => (
+                                <span
+                                  key={tag}
+                                  className="px-2 py-0.5 rounded-full bg-[#FF7722]/10 border border-[#FF7722]/20 text-[#FF7722]/80 text-[9px] font-semibold uppercase tracking-wider"
+                                >
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
                           )}
                         </div>
-                        {/* Tags */}
-                        {blog.tags?.length > 0 && (
-                          <div className="flex flex-wrap gap-1.5 mt-2">
-                            {blog.tags.map((tag: string) => (
-                              <span
-                                key={tag}
-                                className="px-2 py-0.5 rounded-full bg-[#FF7722]/10 border border-[#FF7722]/20 text-[#FF7722]/80 text-[9px] font-semibold uppercase tracking-wider"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
                       </div>
+
+                      {/* excerpt as pull-quote (replaces blog.quote) */}
+                      {blog.excerpt && (
+                        <div className="relative pl-6 border-l-2 border-[#FF7722]/60 py-1 text-left">
+                          <blockquote className="text-base md:text-lg font-medium text-[#FF7722]/90 italic leading-snug font-display">
+                            "{blog.excerpt}"
+                          </blockquote>
+                        </div>
+                      )}
+
+                      {blog.content && (
+                        <div className="relative pl-6  py-1 text-left">
+                          <blockquote className="text-base md:text-lg font-medium text-white leading-snug font-display">
+                            {blog.content}
+                          </blockquote>
+                        </div>
+                      )}
                     </div>
-
-                    {/* excerpt as pull-quote (replaces blog.quote) */}
-                    {blog.excerpt && (
-                      <div className="relative pl-6 border-l-2 border-[#FF7722]/60 py-1 text-left">
-                        <blockquote className="text-base md:text-lg font-medium text-[#FF7722]/90 italic leading-snug font-display">
-                          "{blog.excerpt}"
-                        </blockquote>
-                      </div>
-                    )}
-
-                    {blog.content && (
-                      <div className="relative pl-6  py-1 text-left">
-                        <blockquote className="text-base md:text-lg font-medium text-white leading-snug font-display">
-                          {blog.content}
-                        </blockquote>
-                      </div>
-                    )}
-                  </div>
-                </ScrollReveal>
+                  </ScrollReveal>
+                </Link>
               ))}
             </div>
           </div>

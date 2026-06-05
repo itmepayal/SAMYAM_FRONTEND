@@ -1,13 +1,11 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import React, { useState, useEffect } from "react";
-import { Nav } from "@/components/Nav";
-import { Footer } from "@/components/Footer";
 import { FlowerField } from "@/components/FlowerField";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { API_ENDPOINTS } from "@/lib/api-config";
 
-export const Route = createFileRoute("/admin/login")({
-  component: AdminLoginPage,
+export const Route = createFileRoute("/admin/forgot-password")({
+  component: AdminForgotPasswordPage,
   head: () => ({
     title: "Admin Login | Samyam Sacred Journeys",
     meta: [
@@ -19,52 +17,40 @@ export const Route = createFileRoute("/admin/login")({
   }),
 });
 
-function AdminLoginPage() {
+function AdminForgotPasswordPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const token = localStorage.getItem("samyam_token");
-    if (token) {
-      navigate({ to: "/admin" });
-    }
-  }, [navigate]);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setError("");
     setSuccess("");
     setLoading(true);
 
-    const url = API_ENDPOINTS.AUTH.LOGIN;
-
     try {
-      const response = await fetch(url, {
+      const response = await fetch(API_ENDPOINTS.AUTH.FORGOT_PASSWORD, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email }),
       });
 
       const result = await response.json();
 
       if (!response.ok) {
-        throw new Error(result.message || "Authentication failed");
+        throw new Error(result.message || "Failed to send reset password email.");
       }
 
-      localStorage.setItem("samyam_token", result.data.accessToken);
-      localStorage.setItem("samyam_email", result.data.uid);
-      setSuccess("Success! Redirecting...");
-      setTimeout(() => {
-        navigate({ to: "/admin" });
-      }, 1000);
+      setSuccess(result.message || "Password reset link has been sent to your email.");
+
+      window.location.href = result.data.resetLink;
     } catch (err: any) {
-      setError(err.message || "Something went wrong.");
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -82,10 +68,10 @@ function AdminLoginPage() {
           <div className="text-center mb-8">
             <span className="text-5xl animate-pulse block mb-4 text-amber-400">ॐ</span>
             <h2 className="text-3xl font-display font-semibold tracking-wide text-white">
-              Samyam Admin Portal
+              Reset Your Password
             </h2>
             <p className="text-white/60 text-sm mt-2 font-body">
-              Manage sacred yatras, user queries, and testimonials
+              Enter your registered email address and we'll send you a secure password reset link.
             </p>
           </div>
 
@@ -93,7 +79,7 @@ function AdminLoginPage() {
             {/* Header Title */}
             <div className="border-b border-white/10 mb-6 pb-3 text-center">
               <h3 className="text-sm font-semibold tracking-wider uppercase text-amber-400 font-body">
-                Administrator Sign In
+                Administrator Forgot Password
               </h3>
             </div>
 
@@ -125,35 +111,12 @@ function AdminLoginPage() {
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-semibold text-amber-400/85 mb-2 uppercase tracking-wider">
-                  Password
-                </label>
-                <input
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full px-4 py-3 rounded-2xl bg-white/4 border border-white/10 text-white placeholder-white/30 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/50 text-sm transition-all duration-300"
-                />
-                <div className="mt-5 text-right">
-                  <button
-                    type="button"
-                    onClick={() => navigate({ to: "/admin/forgot-password" })}
-                    className="text-xs text-amber-400 hover:text-amber-300 transition-colors duration-300"
-                  >
-                    Forgot your password?
-                  </button>
-                </div>
-              </div>
-
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 rounded-full bg-gradient-cta text-white font-semibold shadow-glow hover:scale-[1.02] active:scale-[0.98] transition duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full mt-6 py-4 rounded-full bg-gradient-cta text-white font-semibold shadow-glow hover:scale-[1.02] active:scale-[0.98] transition duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {loading ? "Processing..." : "Sign In"}
+                {loading ? "Processing..." : "Reset Password"}
               </button>
             </form>
           </div>

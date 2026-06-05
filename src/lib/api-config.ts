@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: `${API_BASE_URL}/api/v1/auth/login`,
     REGISTER: `${API_BASE_URL}/api/v1/auth/register`,
+    FORGOT_PASSWORD: `${API_BASE_URL}/api/v1/auth/forgot-password`,
   },
   DASHBOARD: {
     STATS: `${API_BASE_URL}/api/v1/dashboard/stats`,

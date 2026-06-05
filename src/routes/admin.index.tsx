@@ -2363,7 +2363,7 @@ function AdminDashboardPage() {
                       type="submit"
                       className="px-10 py-3 rounded-full bg-linear-to-r from-[#FF7A00] to-[#A82A9C] text-white font-black uppercase tracking-widest text-[10px]"
                     >
-                      Save Yatras
+                      {loading ? "Saving..." : "Save Yatras"}
                     </button>
                   </div>
                 </form>
@@ -3139,7 +3139,7 @@ function AdminDashboardPage() {
                       type="submit"
                       className="px-10 py-3 rounded-full bg-linear-to-r from-[#FF7A00] to-[#A82A9C] text-white font-black uppercase tracking-widest text-[10px]"
                     >
-                      Save Teerthas
+                      {loading ? "Saving..." : "Save Teerthas"}
                     </button>
                   </div>
                 </form>
@@ -3331,7 +3331,7 @@ function AdminDashboardPage() {
                       type="submit"
                       className="px-10 py-3 rounded-full bg-linear-to-r from-[#FF7A00] to-[#A82A9C] text-white font-black uppercase tracking-widest text-[10px] shadow-lg shadow-[#FF7A00]/20 hover:scale-105 transition cursor-pointer"
                     >
-                      Save Video
+                      {loading ? "Saving..." : "Save Video"}
                     </button>
                   </div>
                 </form>
@@ -3427,7 +3427,7 @@ function AdminDashboardPage() {
                           content: e.target.value,
                         })
                       }
-                      className="w-full px-5 py-4 rounded-2xl bg-white/[0.04] border border-white/10 text-white"
+                      className="w-full px-5 py-4 rounded-2xl bg-white/4 border border-white/10 text-white"
                       placeholder="<h2>Career Guide</h2><p>...</p>"
                     />
                   </div>
@@ -3613,7 +3613,7 @@ function AdminDashboardPage() {
                       type="submit"
                       className="px-10 py-3 rounded-full bg-gradient-to-r from-[#FF7A00] to-[#A82A9C] text-white font-black uppercase tracking-widest text-[10px]"
                     >
-                      Save Blog
+                      {loading ? "Saving..." : "Save Blog"}
                     </button>
                   </div>
                 </form>
@@ -3648,7 +3648,7 @@ function AdminDashboardPage() {
                 onClick={handleDeleteItem}
                 className="flex-1 py-4 bg-red-500 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-red-500/20 cursor-pointer"
               >
-                {!loadingDeleted ? "Delete Now" : "Loading......."}
+                {loadingDeleted ? "Deleting..." : "Delete Now"}
               </button>
             </div>
           </div>
