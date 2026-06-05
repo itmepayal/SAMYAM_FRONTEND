@@ -179,7 +179,7 @@ interface Blog {
   category: string;
   tags: string[];
   readTime: string;
-  isFeatured: boolean;
+  featured: boolean;
   isPublished: boolean;
 }
 
@@ -267,7 +267,7 @@ const initialBlogState: Blog = {
   category: "",
   tags: [],
   readTime: "",
-  isFeatured: false,
+  featured: true,
   isPublished: true,
 };
 
@@ -3548,20 +3548,20 @@ function AdminDashboardPage() {
                       <button
                         type="button"
                         onClick={() =>
-                          setVideoForm((prev) => ({
+                          setBlogForm((prev) => ({
                             ...prev,
                             featured: !prev.featured,
                           }))
                         }
                         className={`relative h-7 w-14 rounded-full transition ${
-                          videoForm.featured
+                          blogForm.featured
                             ? "bg-gradient-to-r from-[#FF7A00] to-[#A82A9C]"
                             : "bg-white/10"
                         }`}
                       >
                         <div
                           className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-all ${
-                            videoForm.featured ? "right-1" : "left-1"
+                            blogForm.featured ? "right-1" : "left-1"
                           }`}
                         />
                       </button>
@@ -3577,20 +3577,20 @@ function AdminDashboardPage() {
                       <button
                         type="button"
                         onClick={() =>
-                          setVideoForm((prev) => ({
+                          setBlogForm((prev) => ({
                             ...prev,
                             isPublished: !prev.isPublished,
                           }))
                         }
                         className={`relative h-7 w-14 rounded-full transition ${
-                          videoForm.isPublished
+                          blogForm.isPublished
                             ? "bg-gradient-to-r from-[#FF7A00] to-[#A82A9C]"
                             : "bg-white/10"
                         }`}
                       >
                         <div
                           className={`absolute top-1 h-5 w-5 rounded-full bg-white transition-all ${
-                            videoForm.isPublished ? "right-1" : "left-1"
+                            blogForm.isPublished ? "right-1" : "left-1"
                           }`}
                         />
                       </button>
