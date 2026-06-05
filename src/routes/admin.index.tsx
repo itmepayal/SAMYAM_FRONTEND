@@ -321,6 +321,7 @@ function AdminDashboardPage() {
   const [videoForm, setVideoForm] = useState<Video>(initialVideoState);
   const [blogForm, setBlogForm] = useState<Blog>(initialBlogState);
   const [loadingDB, setLoadingDB] = useState(false);
+  const [loadingDeleted, setLoadingDeleted] = useState(false);
 
   // Authentication check
   useEffect(() => {
@@ -434,7 +435,6 @@ function AdminDashboardPage() {
   // Enquiry status change
   const handleUpdateEnquiryStatus = async (id: string, newStatus: Enquiry["status"]) => {
     if (!token) return;
-
     try {
       const response = await fetch(`${API_ENDPOINTS.ENQUIRIES}/${id}`, {
         method: "PUT",
@@ -477,7 +477,7 @@ function AdminDashboardPage() {
     if (type === "teertha") url = `${API_ENDPOINTS.TEERTHAS}/${id}`;
     if (type === "video") url = `${API_ENDPOINTS.TESTIMONIALS}/${id}`;
     if (type === "blog") url = `${API_ENDPOINTS.BLOGS}/${id}`;
-
+    setLoadingDeleted(true);
     try {
       const response = await fetch(url, {
         method: "DELETE",
@@ -505,6 +505,8 @@ function AdminDashboardPage() {
       if (selectedEnquiry?.id === id) setSelectedEnquiry(null);
     } catch (err: any) {
       alert(err.message);
+    } finally {
+      setLoadingDeleted(false);
     }
   };
 
@@ -3646,7 +3648,7 @@ function AdminDashboardPage() {
                 onClick={handleDeleteItem}
                 className="flex-1 py-4 bg-red-500 text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-red-500/20 cursor-pointer"
               >
-                Delete Now
+                {!loadingDeleted ? "Delete Now" : "Loading......."}
               </button>
             </div>
           </div>
