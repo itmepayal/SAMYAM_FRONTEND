@@ -404,7 +404,7 @@ function Index() {
                 <article className="group rounded-3xl overflow-hidden bg-white/[0.03] shadow-soft border border-white/10 hover:border-[#FF7722]/30 hover:shadow-[0_20px_60px_-15px_rgba(61,0,104,0.4)] transition flex flex-col h-full">
                   <div className="aspect-[4/3] overflow-hidden">
                     <img
-                      src={y.img}
+                      src={y.thumbnailImage}
                       alt={y.name}
                       loading="lazy"
                       decoding="async"
@@ -972,7 +972,7 @@ function Index() {
 
       {/* BLOGS / CEO INSIGHTS SECTION */}
       {blogs.length > 0 && (
-        <section className="relative py-20 px-6 bg-gradient-to-b from-background to-[#140817]/60 border-t border-white/5">
+        <section className="relative py-20 px-6 bg-[#3f0369] border-t border-white/5">
           <div className="max-w-4xl mx-auto space-y-12">
             <ScrollReveal variant="fade-up">
               <div className="text-center space-y-3">
@@ -1054,6 +1054,14 @@ function Index() {
                       <div className="relative pl-6 border-l-2 border-[#FF7722]/60 py-1 text-left">
                         <blockquote className="text-base md:text-lg font-medium text-[#FF7722]/90 italic leading-snug font-display">
                           "{blog.excerpt}"
+                        </blockquote>
+                      </div>
+                    )}
+
+                    {blog.content && (
+                      <div className="relative pl-6  py-1 text-left">
+                        <blockquote className="text-base md:text-lg font-medium text-white leading-snug font-display">
+                          {blog.content}
                         </blockquote>
                       </div>
                     )}

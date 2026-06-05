@@ -267,7 +267,7 @@ function YatrasPage() {
                       >
                         <div className="aspect-[4/3] rounded-2xl overflow-hidden border border-black/[0.06] shadow-soft">
                           <img
-                            src={yatra.img}
+                            src={yatra.thumbnailImage}
                             alt={yatra.name}
                             loading="lazy"
                             className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
