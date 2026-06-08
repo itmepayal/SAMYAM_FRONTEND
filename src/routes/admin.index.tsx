@@ -931,29 +931,6 @@ function AdminDashboardPage() {
                     </div>
 
                     {/* Right Side Button */}
-                    <div className="flex xl:justify-end">
-                      <button
-                        onClick={handleDB}
-                        disabled={loadingDB}
-                        className="flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm text-white
-  bg-gradient-to-r from-[#FF7A00] to-[#A82A9C]
-  hover:scale-105 active:scale-95 transition-all duration-300
-  shadow-lg shadow-[#FF7A00]/20 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        {loadingDB ? (
-                          <>
-                            {/* Spinner */}
-                            <span className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                            Seeding...
-                          </>
-                        ) : (
-                          <>
-                            <Database size={16} />
-                            Seed Database
-                          </>
-                        )}
-                      </button>
-                    </div>
                   </div>
                 </div>
 
