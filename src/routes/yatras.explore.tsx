@@ -8,8 +8,8 @@ import { yatraDetailsDb, YatraDetail } from "@/constants/yatra-details";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { API_ENDPOINTS } from "@/lib/api-config";
 import { formatNormalDash } from "@/lib/utils";
+import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
-// Define search query schema for TanStack Router
 const exploreSearchSchema = z.object({
   yatra: z.string().optional(),
 });
@@ -29,6 +29,96 @@ export const Route = createFileRoute("/yatras/explore")({
   }),
 });
 
+function GalleryLightbox({
+  images,
+  startIndex,
+  onClose,
+}: {
+  images: string[];
+  startIndex: number;
+  onClose: () => void;
+}) {
+  const [current, setCurrent] = useState(startIndex);
+
+  const prev = () => setCurrent((c) => (c - 1 + images.length) % images.length);
+  const next = () => setCurrent((c) => (c + 1) % images.length);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+      onClick={onClose}
+    >
+      <button
+        className="absolute top-4 right-4 text-white/80 hover:text-white transition p-2 cursor-pointer"
+        onClick={onClose}
+        aria-label="Close gallery"
+      >
+        <X size={28} />
+      </button>
+
+      {images.length > 1 && (
+        <>
+          <button
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition p-2 bg-white/10 rounded-full cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              prev();
+            }}
+            aria-label="Previous image"
+          >
+            <ChevronLeft size={28} />
+          </button>
+          <button
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition p-2 bg-white/10 rounded-full cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              next();
+            }}
+            aria-label="Next image"
+          >
+            <ChevronRight size={28} />
+          </button>
+        </>
+      )}
+
+      <img
+        src={images[current]}
+        alt={`Gallery image ${current + 1}`}
+        className="max-h-[85vh] max-w-[90vw] object-contain rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      />
+
+      {images.length > 1 && (
+        <div className="absolute bottom-6 flex gap-2">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrent(i);
+              }}
+              className={`w-2 h-2 rounded-full transition cursor-pointer ${
+                i === current ? "bg-amber-400 scale-125" : "bg-white/40 hover:bg-white/70"
+              }`}
+              aria-label={`Go to image ${i + 1}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ExploreYatrasPage() {
   const search = Route.useSearch();
   const initialSlug = search.yatra || "ayodhya-kashi";
@@ -36,6 +126,7 @@ function ExploreYatrasPage() {
   const [yatras, setYatras] = useState<any[]>([]);
   const [selectedYatra, setSelectedYatra] = useState<string>(initialSlug);
   const [activeSubTab, setActiveSubTab] = useState<"overview" | "itinerary" | "prep">("overview");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchYatras = async () => {
@@ -55,26 +146,43 @@ function ExploreYatrasPage() {
     fetchYatras();
   }, []);
 
-  // Keep slug synced with search parameters if they change
   useEffect(() => {
     if (search.yatra) {
       setSelectedYatra(search.yatra);
     }
   }, [search.yatra]);
 
+  // Reset lightbox when yatra changes
+  useEffect(() => {
+    setLightboxIndex(null);
+  }, [selectedYatra]);
+
   const activeYatra =
     yatras.find((y) => y.slug === selectedYatra) || yatras[0] || Object.values(yatraDetailsDb)[0];
+
+  // All images: hero + gallery
+  const allGalleryImages: string[] = activeYatra
+    ? [activeYatra.img, ...(activeYatra.galleryImages || [])]
+    : [];
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
       <Nav />
+
+      {/* Lightbox */}
+      {lightboxIndex !== null && (
+        <GalleryLightbox
+          images={allGalleryImages}
+          startIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
 
       {/* HERO SECTION */}
       <section
         data-nav-theme="dark"
         className="relative min-h-[50vh] flex items-center justify-center overflow-hidden"
       >
-        {/* Background Image & Overlay */}
         <div className="absolute inset-0 z-0">
           <img
             src={activeYatra.img}
@@ -84,7 +192,6 @@ function ExploreYatrasPage() {
           <div className="absolute inset-0 bg-[#1a0a1e]/80 backdrop-blur-[1px]"></div>
         </div>
 
-        {/* Content */}
         <div className="relative z-10 max-w-4xl mx-auto px-6 text-center pt-20">
           <ScrollReveal variant="fade-in" delay={100}>
             <span className="inline-block px-3 py-1 rounded-full bg-amber-500/20 border border-amber-500/30 text-amber-200 text-[10px] md:text-xs font-semibold uppercase tracking-[0.2em] mb-4">
@@ -146,7 +253,7 @@ function ExploreYatrasPage() {
       >
         <FlowerField count={8} />
         <div className="max-w-6xl mx-auto relative z-10">
-          {/* Sub Navigation Bar inside Content */}
+          {/* Sub Navigation Bar */}
           <div className="flex justify-center border-b border-border mb-8 max-w-md mx-auto">
             {[
               { id: "overview", label: "Overview" },
@@ -208,7 +315,7 @@ function ExploreYatrasPage() {
                       </p>
                     </ScrollReveal>
 
-                    {/* Pricing Badges inside Overview */}
+                    {/* Pricing Badges */}
                     <ScrollReveal variant="fade-up" delay={200}>
                       <div className="p-6 rounded-3xl bg-white border border-black/[0.06] space-y-3 shadow-soft">
                         <h4 className="text-xs font-semibold tracking-wider text-foreground uppercase font-body">
@@ -231,7 +338,7 @@ function ExploreYatrasPage() {
                               {activeYatra.doublePrice}
                             </span>
                           </div>
-                        </div>{" "}
+                        </div>
                       </div>
                     </ScrollReveal>
 
@@ -276,7 +383,95 @@ function ExploreYatrasPage() {
                   </ScrollReveal>
                 </div>
 
-                {/* Day-wise Itinerary (Full Width Grid) */}
+                {/* ── GALLERY SECTION ── */}
+                {activeYatra.galleryImages && activeYatra.galleryImages.length > 0 && (
+                  <ScrollReveal variant="fade-up">
+                    <div className="space-y-5">
+                      <div className="flex items-center gap-3">
+                        <span className="text-amber-600 font-bold text-xs uppercase tracking-wider">
+                          Previous Glimpses of Yatras
+                        </span>
+                        <span className="flex-1 h-px bg-border" />
+                        <span className="text-[10px] text-muted-foreground">
+                          {allGalleryImages.length} photos
+                        </span>
+                      </div>
+
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-3 rounded-3xl overflow-hidden">
+                        <button
+                          className="md:col-span-8 relative aspect-[4/3] md:aspect-auto md:min-h-[340px] overflow-hidden group cursor-pointer focus:outline-none"
+                          onClick={() => setLightboxIndex(0)}
+                          aria-label="Open gallery, image 1"
+                        >
+                          <img
+                            src={activeYatra.img}
+                            alt={activeYatra.name}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-white text-sm font-semibold bg-black/50 px-4 py-2 rounded-full">
+                              View Gallery
+                            </span>
+                          </div>
+                        </button>
+
+                        {/* Side gallery images */}
+                        <div className="md:col-span-4 grid grid-cols-2 md:grid-cols-1 gap-3">
+                          {activeYatra.galleryImages.slice(0, 2).map((img: string, idx: number) => (
+                            <button
+                              key={idx}
+                              className="relative aspect-square md:flex-1 md:min-h-[160px] overflow-hidden group cursor-pointer focus:outline-none"
+                              onClick={() => setLightboxIndex(idx + 1)}
+                              aria-label={`Open gallery, image ${idx + 2}`}
+                            >
+                              <img
+                                src={img}
+                                alt={`${activeYatra.name} gallery ${idx + 2}`}
+                                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                              />
+                              {/* "+N more" overlay on last visible tile */}
+                              {idx === 1 && allGalleryImages.length > 3 ? (
+                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                                  <span className="text-white text-sm font-semibold">
+                                    +{allGalleryImages.length - 3} more
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Thumbnail strip for 4+ images */}
+                      {allGalleryImages.length > 3 && (
+                        <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
+                          {allGalleryImages.map((img: string, idx: number) => (
+                            <button
+                              key={idx}
+                              onClick={() => setLightboxIndex(idx)}
+                              className="flex-none w-20 h-14 md:w-24 md:h-16 rounded-xl overflow-hidden border-2 transition-all duration-200 cursor-pointer focus:outline-none hover:border-amber-500"
+                              style={{
+                                borderColor:
+                                  lightboxIndex === idx ? "rgb(217,119,6)" : "transparent",
+                              }}
+                              aria-label={`View image ${idx + 1}`}
+                            >
+                              <img
+                                src={img}
+                                alt={`Thumbnail ${idx + 1}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </ScrollReveal>
+                )}
+
+                {/* Day-wise Itinerary */}
                 {activeSubTab === "itinerary" && (
                   <div id="itinerary-section" className="animate-fade-in scroll-mt-20">
                     <div className="p-8 md:p-10 rounded-[2.5rem] bg-gradient-to-br from-[#802c84] via-[#460b4c] to-[#1d0121] border border-white/10 text-white shadow-glow relative overflow-hidden">
@@ -373,7 +568,7 @@ function ExploreYatrasPage() {
                   </div>
                 </ScrollReveal>
 
-                {/* Sacred Darshans Circuit Cards Grid */}
+                {/* Sacred Darshans Circuit */}
                 <div className="border-t border-border pt-12">
                   <ScrollReveal variant="fade-up">
                     <div className="text-center mb-10">

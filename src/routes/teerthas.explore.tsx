@@ -7,7 +7,7 @@ import { Footer } from "@/components/Footer";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
 import { API_ENDPOINTS } from "@/lib/api-config";
 import { formatNormalDash } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
+import { Loader2, X, ChevronLeft, ChevronRight } from "lucide-react";
 
 const exploreSearchSchema = z.object({
   teertha: z.string().optional(),
@@ -28,20 +28,109 @@ export const Route = createFileRoute("/teerthas/explore")({
   }),
 });
 
+function GalleryLightbox({
+  images,
+  startIndex,
+  onClose,
+}: {
+  images: string[];
+  startIndex: number;
+  onClose: () => void;
+}) {
+  const [current, setCurrent] = useState(startIndex);
+
+  const prev = () => setCurrent((c) => (c - 1 + images.length) % images.length);
+  const next = () => setCurrent((c) => (c + 1) % images.length);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+      onClick={onClose}
+    >
+      <button
+        className="absolute top-4 right-4 text-white/80 hover:text-white transition p-2 cursor-pointer"
+        onClick={onClose}
+        aria-label="Close gallery"
+      >
+        <X size={28} />
+      </button>
+
+      {images.length > 1 && (
+        <>
+          <button
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition p-2 bg-white/10 rounded-full cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              prev();
+            }}
+            aria-label="Previous image"
+          >
+            <ChevronLeft size={28} />
+          </button>
+          <button
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-white/80 hover:text-white transition p-2 bg-white/10 rounded-full cursor-pointer"
+            onClick={(e) => {
+              e.stopPropagation();
+              next();
+            }}
+            aria-label="Next image"
+          >
+            <ChevronRight size={28} />
+          </button>
+        </>
+      )}
+
+      <img
+        src={images[current]}
+        alt={`Gallery image ${current + 1}`}
+        className="max-h-[85vh] max-w-[90vw] object-contain rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      />
+
+      {images.length > 1 && (
+        <div className="absolute bottom-6 flex gap-2">
+          {images.map((_, i) => (
+            <button
+              key={i}
+              onClick={(e) => {
+                e.stopPropagation();
+                setCurrent(i);
+              }}
+              className={`w-2 h-2 rounded-full transition cursor-pointer ${
+                i === current ? "bg-amber-400 scale-125" : "bg-white/40 hover:bg-white/70"
+              }`}
+              aria-label={`Go to image ${i + 1}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ExploreTeerthasPage() {
   const search = Route.useSearch();
   const initialSlug = search.teertha || "kashi";
 
   const [teertha, setTeertha] = useState<any>(null);
   const [selectedTeertha, setSelectedTeertha] = useState(initialSlug);
-
   const [activeSubTab, setActiveSubTab] = useState<"overview" | "itinerary" | "prep">("overview");
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const fetchTeertha = async () => {
       try {
         const res = await fetch(`${API_ENDPOINTS.TEERTHAS}/${selectedTeertha}`);
-
         const result = await res.json();
         if (result.success) {
           setTeertha(result.data);
@@ -50,7 +139,6 @@ function ExploreTeerthasPage() {
         console.error(error);
       }
     };
-
     fetchTeertha();
   }, [selectedTeertha]);
 
@@ -62,6 +150,11 @@ function ExploreTeerthasPage() {
 
   const activeTeertha = teertha;
   const allTeerthas = [teertha];
+
+  // All images: hero + gallery
+  const allGalleryImages: string[] = activeTeertha
+    ? [activeTeertha.img, ...(activeTeertha.galleryImages || [])]
+    : [];
 
   if (!activeTeertha) {
     return (
@@ -75,6 +168,16 @@ function ExploreTeerthasPage() {
     <div className="relative min-h-screen overflow-x-hidden bg-background text-foreground">
       <Nav />
 
+      {/* Lightbox */}
+      {lightboxIndex !== null && (
+        <GalleryLightbox
+          images={allGalleryImages}
+          startIndex={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+        />
+      )}
+
+      {/* HERO SECTION */}
       <section
         data-nav-theme="dark"
         className="relative min-h-[50vh] flex items-center justify-center overflow-hidden"
@@ -242,7 +345,7 @@ function ExploreTeerthasPage() {
                               {activeTeertha.doublePrice}
                             </span>
                           </div>
-                        </div>{" "}
+                        </div>
                       </div>
                     </ScrollReveal>
 
@@ -286,6 +389,40 @@ function ExploreTeerthasPage() {
                     </div>
                   </ScrollReveal>
                 </div>
+
+                {/* ── GALLERY SECTION ── */}
+                {activeTeertha.galleryImages && activeTeertha.galleryImages.length > 0 && (
+                  <ScrollReveal variant="fade-up">
+                    <div className="space-y-5">
+                      <div className="flex items-center gap-3">
+                        <span className="text-amber-600 font-bold text-xs uppercase tracking-wider">
+                          Previous Glimpses of Teerthas
+                        </span>
+                        <span className="flex-1 h-px bg-border" />
+                        <span className="text-[10px] text-muted-foreground">
+                          {allGalleryImages.length} photos
+                        </span>
+                      </div>
+
+                      {/* Main featured image + side images grid */}
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                        {allGalleryImages.map((img: string, idx: number) => (
+                          <button
+                            key={idx}
+                            onClick={() => setLightboxIndex(idx)}
+                            className="overflow-hidden rounded-lg"
+                          >
+                            <img
+                              src={img}
+                              alt={`${activeTeertha.name} ${idx + 1}`}
+                              className="w-full h-48 object-cover"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </ScrollReveal>
+                )}
 
                 {/* Day-wise Itinerary (Full Width Grid) */}
                 {activeSubTab === "itinerary" && (
@@ -404,7 +541,7 @@ function ExploreTeerthasPage() {
                         delay={cIdx * 150}
                         className="h-full"
                       >
-                        <div className="p-6 md:p-8 rounded-3xl bg-white border border-black/[0.06] shadow-soft hover:shadow-glow hover:border-amber-600/30 transition-all duration-300 flex flex-col justify-between h-full">
+                        <div className="p-6 md:p-8 rounded-3xl bg-white border border-black/6 shadow-soft hover:shadow-glow hover:border-amber-600/30 transition-all duration-300 flex flex-col justify-between h-full">
                           <div>
                             <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-amber-600 mb-2 block">
                               Sacred Circuit
