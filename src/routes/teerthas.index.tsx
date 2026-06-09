@@ -57,7 +57,7 @@ function TeerthasPage() {
     fetchTeerthas();
   }, []);
 
-  const regions = ["All", ...new Set(teerthas.map((t) => t.region))];
+  const regions = ["All", "North", "East", "West", "South"];
 
   const categories = ["All", "Jyotirlinga", "Char Dham", "Krishna", "Sai Baba"];
 
