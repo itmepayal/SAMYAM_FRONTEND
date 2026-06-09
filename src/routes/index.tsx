@@ -950,8 +950,7 @@ function Index() {
                     </div>
                     <div className="text-4xl text-[#FF7722]/30 mb-6 font-serif">“</div>
                     <blockquote className="text-2xl md:text-3xl font-display font-medium text-white italic leading-snug">
-                      Let's not just visit the sacred. Let's transform the way we experience the
-                      soul.
+                      Lets not just visit the sacred. Let the sacred transform us from deep within.
                     </blockquote>
                     <div className="mt-8 space-y-1">
                       <div className="w-12 h-px bg-white/20 mx-auto mb-4" />

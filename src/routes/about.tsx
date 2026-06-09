@@ -438,7 +438,7 @@ function AboutPage() {
           <ScrollReveal variant="fade-up" delay={200}>
             <div className="mt-12 pt-8 border-t border-border text-center">
               <p className="font-display italic text-lg text-foreground leading-relaxed">
-                "Let’s not just visit the sacred. Let’s transform the way we experience the soul."
+                "Let's not just visit the sacred. Let the sacred transform us from deep within."
               </p>
               <p className="text-xs uppercase tracking-widest text-amber-600 mt-2 font-body font-semibold">
                 - Nileema Shenoy, Founder

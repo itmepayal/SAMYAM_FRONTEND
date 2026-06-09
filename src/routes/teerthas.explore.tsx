@@ -322,33 +322,6 @@ function ExploreTeerthasPage() {
                       </div>
                     </ScrollReveal>
 
-                    {/* Pricing Badges */}
-                    <ScrollReveal variant="fade-up" delay={300}>
-                      <div className="p-6 rounded-3xl bg-white border border-black/[0.06] space-y-3 shadow-soft">
-                        <h4 className="text-xs font-semibold tracking-wider text-foreground uppercase font-body">
-                          Investment & Occupancy Details
-                        </h4>
-                        <div className="flex flex-col sm:flex-row gap-3">
-                          <div className="flex-1 p-3.5 rounded-2xl bg-muted border border-border flex flex-col justify-center items-center shadow-soft hover:border-amber-600/30 transition duration-300">
-                            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
-                              Triple Occupancy
-                            </span>
-                            <span className="text-sm md:text-base font-semibold text-amber-600 mt-1">
-                              {activeTeertha.triplePrice}
-                            </span>
-                          </div>
-                          <div className="flex-1 p-3.5 rounded-2xl bg-muted border border-border flex flex-col justify-center items-center shadow-soft hover:border-amber-600/30 transition duration-300">
-                            <span className="text-[10px] text-muted-foreground uppercase font-bold tracking-wider">
-                              Double Occupancy
-                            </span>
-                            <span className="text-sm md:text-base font-semibold text-amber-600 mt-1">
-                              {activeTeertha.doublePrice}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </ScrollReveal>
-
                     {/* Call to Action */}
                     <ScrollReveal variant="fade-up" delay={400}>
                       <div className="pt-2 flex flex-wrap gap-4">
@@ -423,6 +396,27 @@ function ExploreTeerthasPage() {
                     </div>
                   </ScrollReveal>
                 )}
+
+                {/* ── FLOATING CTA STRIP ── */}
+                <div className="sticky bottom-0 z-40 w-full bg-linear-to-r from-[#802c84] via-[#5c0e62] to-[#1d0121] border-t border-white/10 shadow-2xl rounded-4xl">
+                  <div className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between gap-4">
+                    <div className="hidden sm:block">
+                      <p className="text-white font-semibold text-sm font-display">
+                        {activeTeertha.name}
+                      </p>
+                      <p className="text-white/50 text-[10px] font-body">
+                        {activeTeertha.duration} &nbsp;•&nbsp; {activeTeertha.region}
+                      </p>
+                    </div>
+
+                    <Link
+                      to="/enquire"
+                      className="ml-auto px-7 py-2.5 bg-gradient-cta text-accent-foreground font-semibold rounded-full text-sm shadow-soft hover:scale-[1.03] transition flex items-center gap-2 cursor-pointer whitespace-nowrap"
+                    >
+                      Book This Yatra ➔
+                    </Link>
+                  </div>
+                </div>
 
                 {/* Day-wise Itinerary (Full Width Grid) */}
                 {activeSubTab === "itinerary" && (
@@ -543,9 +537,6 @@ function ExploreTeerthasPage() {
                       >
                         <div className="p-6 md:p-8 rounded-3xl bg-white border border-black/6 shadow-soft hover:shadow-glow hover:border-amber-600/30 transition-all duration-300 flex flex-col justify-between h-full">
                           <div>
-                            <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-amber-600 mb-2 block">
-                              Sacred Circuit
-                            </span>
                             <h4 className="text-lg font-display font-semibold text-foreground mb-4 border-b border-border pb-2">
                               {category.title}
                             </h4>

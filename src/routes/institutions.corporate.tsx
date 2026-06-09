@@ -100,7 +100,7 @@ function CorporatePage() {
       >
         <div className="absolute inset-0 z-0">
           <img
-            src="https://samyam.co/images/corporate.jpg"
+            src="https://img.magnific.com/free-photo/low-angle-view-skyscrapers_1359-1105.jpg?semt=ais_hybrid&w=740&q=80"
             alt="Corporate Wellness and Spiritual Leadership"
             className="w-full h-full object-cover object-center filter brightness-[0.4]"
           />
@@ -238,11 +238,11 @@ function CorporatePage() {
             <ScrollReveal variant="fade-left" delay={200}>
               <div className="relative aspect-square rounded-[3rem] overflow-hidden shadow-glow border border-border">
                 <img
-                  src="https://samyam.co/images/why%20choose%20samyam.jpg"
+                  src="https://i.pinimg.com/originals/37/da/e9/37dae98cd39af52785a8aebda673b2cb.jpg"
                   alt="Team Building"
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-10 left-10 text-white">
                   <p className="text-2xl font-display font-medium">
                     "Innovation starts with a steady mind."

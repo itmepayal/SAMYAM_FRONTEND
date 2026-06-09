@@ -590,9 +590,6 @@ function ExploreYatrasPage() {
                       >
                         <div className="p-6 md:p-8 rounded-3xl bg-white border border-black/[0.06] shadow-soft hover:shadow-glow hover:border-amber-600/30 transition-all duration-300 flex flex-col justify-between h-full">
                           <div>
-                            <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-amber-600 mb-2 block">
-                              Sacred Circuit
-                            </span>
                             <h4 className="text-lg font-display font-semibold text-foreground mb-4 border-b border-border pb-2">
                               {category.title}
                             </h4>

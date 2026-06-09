@@ -158,7 +158,7 @@ function KnowledgePortalPage() {
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10 space-y-6 pt-24">
           <ScrollReveal variant="fade-in" delay={100}>
             <p className="font-display italic text-accent text-lg md:text-xl tracking-wider">
-              ॥ ज्ञानं परमं बलम् ॥
+              ॥ न हि ज्ञानेन सदृशं ॥
             </p>
           </ScrollReveal>
           <ScrollReveal variant="fade-up" delay={250}>
